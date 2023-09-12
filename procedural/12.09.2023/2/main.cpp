@@ -22,11 +22,12 @@ void split() {
   cin >> x >> a;
   if (abs(x) < 1) {
     if (x != 0) {
-      w = a * log(abs(x));
-    } else {
-      w = 0;
-    }
-
+      if (a == 0){
+        w = 0;
+      } else {
+        w = a * log(abs(x));
+      }
+}
   } else {
     l = a - x * x;
     if (l >= 0) {
@@ -35,7 +36,8 @@ void split() {
       w = 0;
     }
   }
-  cout << w << endl;
+  
+  cout << abs(w) << endl;
 }
 
 // 2.3
@@ -43,13 +45,37 @@ void func() {
   float x, y, b, z;
   cin >> x >> y >> b;
   if ((b - y) > 0 && (b - x) >= 0) {
-    z = log((b - y)) * sqrt(b - x)
+    z = log((b - y)) * sqrt(b - x);
   } else {
     cout << "Lox" << endl;
   }
 }
+
+void sequence() {
+  int n;
+  cin >> n;
+  for (int i = 0; i <= 10; ++i){
+    cout << n + i << " ";
+  }
+  cout << endl; 
+}
+
+void tabulation() {
+  double x, y;
+
+  for (x = -4.0; x <=4; x+=0.5){
+    if (x-1 != 0){
+      y = (x*x - 2*x + 2) / (x - 1);
+      cout << y << endl;
+    }
+  }
+}
+
 int main() {
   // conus();
   // split();
   // func();
+  // sequence();
+  // tabulation();
+
 }
