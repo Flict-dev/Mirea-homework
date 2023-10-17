@@ -27,8 +27,4 @@ void eratosphen() {
   cout << "\n";
 }
 
-
-int main() {
-  eratosphen();
-
-}
+int main() { eratosphen(); }
