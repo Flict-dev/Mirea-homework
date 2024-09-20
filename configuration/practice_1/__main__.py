@@ -11,13 +11,10 @@ from commands import CommandDispatcher
 class ShellEmulator:
     def __init__(self, config_path):
         self.load_config(config_path)
-        self.temp_dir = tempfile.mkdtemp()  # Временная директория для распаковки
-        self.load_filesystem()
-        self.current_path = self.temp_dir  # Текущая директория
         self.log_file = open(self.log_path, 'w', newline='')
         self.logger = csv.writer(self.log_file)
         self.logger.writerow(['Timestamp', 'Command'])
-        self.dispatcher = CommandDispatcher()
+        self.dispatcher = CommandDispatcher(self.fs_path)
 
     def load_config(self, config_path):
         """Чтение конфигурации из CSV"""
@@ -33,11 +30,6 @@ class ShellEmulator:
                     self.log_path = value
                 elif key == "startup_script":
                     self.startup_script = value
-
-    def load_filesystem(self):
-        """Распаковка файловой системы из zip-архива во временную директорию"""
-        with zipfile.ZipFile(self.fs_path, 'r') as zip_ref:
-            zip_ref.extractall(self.temp_dir)
 
     def execute_command(self, command):
         """Выполнение команды"""
@@ -65,18 +57,14 @@ class ShellEmulator:
             cmd_res = self.execute_command(command)
             if cmd_res == "clear":
                 text_area.delete('1.0', tk.END)
+            elif cmd_res == "exit":
+                exit(0)
             else:
                 text_area.insert(tk.END, f"{cmd_res}\n")
             input_field.delete(0, tk.END)
             
         input_field.bind("<Return>", process_input)
         root.mainloop()
-
-    def exit_shell(self):
-        """Команда exit: завершение сеанса"""
-        self.log_file.close()
-        shutil.rmtree(self.temp_dir)  # Удаляем временную директорию
-        exit(0)
 
 
 # Запуск эмулятора
