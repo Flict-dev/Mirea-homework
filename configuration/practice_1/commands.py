@@ -47,10 +47,20 @@ class WhoamiCommand(BaseCommand):
     def run(vfs, current_path, *args):
         return "root"
     
-class PWDCommand(BaseCommand):
+class FindCommand(BaseCommand):
     @staticmethod
     def run(vfs, current_path, *args):
-        return current_path
+        if not args:
+            return "Error: not enough arguments"
+        for file_path in vfs.namelist():
+            if args[0] in file_path:
+                return file_path
+        return "Error: path not found"
+
+class ClearCommand(BaseCommand):
+    @staticmethod
+    def run(vfs, current_path, *args):
+        return "clear"
 
 class CommandDispatcher:
     def __init__(self, zip_path):
@@ -60,8 +70,9 @@ class CommandDispatcher:
             'ls': LSCommand,
             'cd': CDCommand,
             'exit': ExitCommand,
-            'pwd': PWDCommand,
+            'find': FindCommand,
             'whoami': WhoamiCommand,
+            'clear': ClearCommand,
         }
 
     def execute(self, command: str) -> str:
