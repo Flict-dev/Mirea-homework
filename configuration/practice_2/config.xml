@@ -1,0 +1,4 @@
+<config>
+    <plantuml_path>~/plantuml.jar</plantuml_path>
+    <package>curl</package>
+</config>
