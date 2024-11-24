@@ -112,14 +112,13 @@ def main():
     config_text = sys.stdin.read()
 
     parser = ConfigParser()
-    # try:
-    json_output = parser.parse(config_text)
-    with open(output_file, 'w') as json_file:
-        json_file.write(json_output)
-    print(f"Output written to {output_file}")
-    # except ValueError as e:
-    #     print(e)
-    #     print(f"Syntax error: {e}", file=sys.stderr)
+    try:
+        json_output = parser.parse(config_text)
+        with open(output_file, 'w') as json_file:
+            json_file.write(json_output)
+        print(f"Output written to {output_file}")
+    except ValueError as e:
+        print(f"Syntax error: {e}", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
