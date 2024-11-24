@@ -40,7 +40,7 @@ def test_evaluate_expression_addition():
 def test_evaluate_expression_nested():
     parser = ConfigParser()
     parser.constants = {"a": 5}
-    result = parser.evaluate_expression(".[a 3 + 2 *].")
+    result = parser.evaluate_expression(".[max(a,2) 3 + 2 *].")
     assert result == 16
 
 def test_parse_to_correct_json():
@@ -49,7 +49,7 @@ def test_parse_to_correct_json():
     username is @john_doe;
     age is 30;
     height_in_cm is .[180].;
-    user_info is dict(name=@john_doe, age=30);
+    user_info is dict(name=username, age=30);
     """
     expected_json = """{
     "username": "john_doe",

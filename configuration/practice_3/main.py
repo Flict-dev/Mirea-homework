@@ -21,18 +21,17 @@ class ConfigParser:
         elif value.startswith(".[") and (value.endswith("].,") or value.endswith('].') or value.endswith('].;')):
             return self.evaluate_expression(value)
         elif value in self.constants:
-            
             return self.constants[value]
         elif value.isdigit():
             return int(value)
         elif value.startswith('dict(') and (value.endswith("),") or value.endswith(')') or value.endswith(');')):
             return self.parse_dict(value)
+        # raise ValueError(f"Unsupported value type: {value}")
 
         
     def parse_expressions(self, text):
         lines = text.split(';')
         result = {}
-
         for line in lines:
             line = line.strip()
             if 'is' not in line:
@@ -42,34 +41,34 @@ class ConfigParser:
             value = value.strip()
             self.constants[name] = self.parse_value(value)
         return result
+    
+    def _is_operator(self, c):
+        return c in ['+', '-', '*', '/']
 
-    def evaluate_expression(self, expr):
-        tokens = expr.strip('.[]').split()
+    def evaluate_expression(self, postfix_expr):
         stack = []
-        for token in tokens:
-            if token.isdigit():
-                stack.append(int(token))
-            elif token in self.constants:
-                stack.append(self.constants[token])
-            elif token == '+':
-                b = stack.pop()
-                a = stack.pop()
-                stack.append(a + b)
-            elif token == '-':
-                b = stack.pop()
-                a = stack.pop()
-                stack.append(a - b)
-            elif token == '*':
-                b = stack.pop()
-                a = stack.pop()
-                stack.append(a * b)
-            elif token == '/':
-                b = stack.pop()
-                a = stack.pop()
-                stack.append(a / b)
+        tokens = postfix_expr.strip('.[].').split()
+        for char in tokens:
+            if not self._is_operator(char):
+                stack.append(char)
             else:
-                raise ValueError(f"Syntax error: Unknown token {token}")
-        return stack[0]
+                operand2 = stack.pop()
+                operand1 = stack.pop()
+                new_expr = f"({operand1}{char}{operand2})"
+                stack.append(new_expr)
+        infix = stack.pop()
+        try:
+            int_variables = {}
+            for key, value in self.constants.items():
+                if isinstance(value, int):
+                    int_variables[key] = value
+            allowed_globals = {"__builtins__": None, "max": max, "print": print}
+            result = eval(infix, allowed_globals, int_variables)
+            return result
+        except Exception as e:
+
+            raise ValueError(f"Error evaluating expression: {postfix_expr} ({e})")
+
 
     def find_dict_pos(self, text: str, start: int):
         count_of_open_brackets = 0
@@ -87,7 +86,7 @@ class ConfigParser:
 
     def parse_dict(self, line):
         cleaned_line = line.strip('dict()')
-        items = cleaned_line.split(',')
+        items = cleaned_line.split(',\n')
         result = {}
         shift = 0
         for item in items:
@@ -113,12 +112,14 @@ def main():
     config_text = sys.stdin.read()
 
     parser = ConfigParser()
-
+    # try:
     json_output = parser.parse(config_text)
     with open(output_file, 'w') as json_file:
         json_file.write(json_output)
     print(f"Output written to {output_file}")
-
+    # except ValueError as e:
+    #     print(e)
+    #     print(f"Syntax error: {e}", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
