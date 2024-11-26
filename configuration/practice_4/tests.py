@@ -15,7 +15,7 @@ class Case:
 @pytest.mark.parametrize("op", [
     Case("load",
                  "LOAD 161\n",
-                 bytes([0x2a, 0x14, 0x00, 0x00, 0x00])
+                 bytes([0x2a, 0x14])
     ),
     Case("read",
                  "READ 411\n",

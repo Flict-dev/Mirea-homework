@@ -45,6 +45,7 @@ def process_command(command, operand, buffer):
     else:
         buffer.write(operand, 31)
         buffer.write(0, 4)
+
 def assemble(input_path, binary_path, log_path):
     buffer = TempBuffer()
 
