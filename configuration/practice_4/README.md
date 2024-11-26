@@ -21,3 +21,4 @@ python interpreter.py program.bin result.csv 20 32
 pip install pytest
 pytest -v tests.py
 ```
+<img width="1208" alt="image" src="https://github.com/user-attachments/assets/e19901d3-9499-4ed3-97c1-590e1ecc9287">
